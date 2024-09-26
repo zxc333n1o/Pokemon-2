@@ -3,6 +3,10 @@ import { Market } from './components/Market/Market';
 import * as PIXI from 'pixi.js';
 import storeImage from './components/Pictures/Store.jpg'; // обнови путь к иконке магазина
 import pikachuImage from './components/Pictures/Pikachu.png'; // обнови путь к иконке Pikachu
+import backArrow from './components/Pictures/strelka.png'; // обнови путь к иконке стрелки назад
+
+
+
 
 const App: React.FC = () => {
   const [marketVisible, setMarketVisible] = useState(false);
@@ -13,6 +17,11 @@ const App: React.FC = () => {
 
   const openMarket = () => {
     setMarketVisible(true);
+  };
+
+  const closeMarket = () => {
+    setMarketVisible(false);
+    setPokemonVisible(false); // Закрываем список покемонов, если он открыт
   };
 
   const togglePokemonList = () => {
@@ -41,6 +50,12 @@ const App: React.FC = () => {
 
       {marketVisible && (
         <div>
+          <img 
+            src={backArrow} 
+            alt="Back to Store" 
+            onClick={closeMarket} 
+            style={{ cursor: 'pointer', width: '50px' }} 
+          />
           <img 
             src={pikachuImage} 
             alt="Pikachu" 
