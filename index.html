@@ -2,14 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="/js/index.js"></script>
     <link rel="stylesheet" href="style.css">
+    <script src="./js/Graph.js"></script>
+    <script src="./js/index.js"></script>
 </head>
 <body>
-
+    <div id="interfaceContainer">
+        <canvas id="canvas"></canvas>
+        <div id="controlPanel">
+            <button id="moveLeft" class="controlButton"> &#171 </button>
+            <div id="upDownButtons" >
+                <button id="moveUp" class="controlButton">^</button>
+                <button id="moveDown" class="controlButton">v</button>    
+            </div>            
+            <button id="moveRight" class="controlButton"> &#187 </button>
+        </div>
+    </div>
 </body>
 </html>
