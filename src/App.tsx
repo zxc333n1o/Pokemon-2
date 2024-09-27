@@ -1,9 +1,12 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';  
 import { Market } from './components/Market/Market';
+import { RandomMarket } from './components/Market/randomMarket';
 import * as PIXI from 'pixi.js';
-import storeImage from './components/Pictures/Store.jpg'; // обнови путь к иконке магазина
-import pikachuImage from './components/Pictures/Pikachu.png'; // обнови путь к иконке Pikachu
-import backArrow from './components/Pictures/strelka.png'; // обнови путь к иконке стрелки назад
+import storeImage from './components/Pictures/Store.jpg'; 
+import randomMarketImage from './components/Pictures/randomMarket.png'; 
+import pikachuImage from './components/Pictures/Pikachu.png'; 
+import backArrow from './components/Pictures/strelka.png'; 
+
 
 
 
@@ -11,9 +14,15 @@ import backArrow from './components/Pictures/strelka.png'; // обнови пу�
 const App: React.FC = () => {
   const [marketVisible, setMarketVisible] = useState(false);
   const [pokemonVisible, setPokemonVisible] = useState(false);
+  const [randomMarketVisible, setRandomMarketVisible] = useState(false);
   const [purchasedPokemons, setPurchasedPokemons] = useState<{ [key: string]: number }>({});
-  const [coins, setCoins] = useState(100); // Переносим сюда состояние монет
-  const [inflationRate, setInflationRate] = useState(1.0); // И инфляции
+  const [coins, setCoins] = useState(100);
+  const [inflationRates, setInflationRates] = useState<{ [key: string]: number }>({
+    Pikachu: 1.0,
+    Charmander: 1.0,
+    Bulbasaur: 1.0,
+    Squirtle: 1.0,
+  });
 
   const openMarket = () => {
     setMarketVisible(true);
@@ -21,7 +30,15 @@ const App: React.FC = () => {
 
   const closeMarket = () => {
     setMarketVisible(false);
-    setPokemonVisible(false); // Закрываем список покемонов, если он открыт
+    setPokemonVisible(false);
+  };
+
+  const openRandomMarket = () => {
+    setRandomMarketVisible(true);
+  };
+
+  const closeRandomMarket = () => {
+    setRandomMarketVisible(false);
   };
 
   const togglePokemonList = () => {
@@ -33,19 +50,30 @@ const App: React.FC = () => {
       ...prevState,
       [pokemonName]: (prevState[pokemonName] || 0) + 1
     }));
-    setCoins(coins - price); // Обновляем монеты
-    setInflationRate(inflationRate + 0.1); // Обновляем инфляцию
+    setCoins(coins - price);
+    setInflationRates(prevRates => ({
+      ...prevRates,
+      [pokemonName]: prevRates[pokemonName] + 0.1,
+    }));
   };
 
   return (
     <div>
-      {!marketVisible && (
-        <img 
-          src={storeImage} 
-          alt="Store" 
-          style={{ cursor: 'pointer', width: '150px' }} 
-          onClick={openMarket}
-        />
+      {!marketVisible && !randomMarketVisible && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '320px' }}>
+          <img 
+            src={storeImage} 
+            alt="Store" 
+            style={{ cursor: 'pointer', width: '150px' }} 
+            onClick={openMarket}
+          />
+          <img 
+            src={randomMarketImage} 
+            alt="Random Market" 
+            style={{ cursor: 'pointer', width: '150px' }} 
+            onClick={openRandomMarket}
+          />
+        </div>
       )}
 
       {marketVisible && (
@@ -65,7 +93,7 @@ const App: React.FC = () => {
           {pokemonVisible && (
             <Market 
               coins={coins} 
-              inflationRate={inflationRate} 
+              inflationRates={inflationRates} 
               onPokemonPurchase={handlePokemonPurchase} 
             />
           )}
@@ -79,6 +107,21 @@ const App: React.FC = () => {
               ))}
             </ul>
           </div>
+        </div>
+      )}
+
+      {randomMarketVisible && (
+        <div>
+          <img 
+            src={backArrow} 
+            alt="Back to Store" 
+            onClick={closeRandomMarket} 
+            style={{ cursor: 'pointer', width: '50px' }} 
+          />
+          <RandomMarket 
+            coins={coins} 
+            onPokemonPurchase={handlePokemonPurchase} 
+          />
         </div>
       )}
     </div>
