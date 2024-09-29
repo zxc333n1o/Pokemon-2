@@ -1,10 +1,11 @@
 import React from 'react';
 import { Pokemon } from '../Pokemon/Pokemon';
-import * as PIXI from 'pixi.js';
 
-
-
-
+interface MarketProps {
+  coins: number;
+  inflationRates: { [key: string]: number };
+  onPokemonPurchase: (pokemonName: string, price: number) => void; 
+}
 
 interface PokemonType {
   id: number;
@@ -19,26 +20,19 @@ const initialPokemons: PokemonType[] = [
   { id: 4, name: "Squirtle", basePrice: 8 },
 ];
 
-
-interface MarketProps {
-  coins: number;
-  inflationRates: { [key: string]: number }; // Используем объект с инфляцией для каждого покемона
-  onPokemonPurchase: (pokemonName: string, price: number) => void; 
-}
-
 export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemonPurchase }) => {
   const [pokemons] = React.useState<PokemonType[]>(initialPokemons);
 
-  const buyPokemon = (id: number, price: number) => {
-    const pokemon = pokemons.find(p => p.id === id);
-    if (pokemon) {
-      const adjustedPrice = Math.round(price * (inflationRates[pokemon.name] || 1)); // Применяем индивидуальный коэффициент инфляции
-      if (coins >= adjustedPrice) {
-        onPokemonPurchase(pokemon.name, adjustedPrice); // Передаем имя и цену в App
-        alert(`Вы купили ${pokemon.name} за ${adjustedPrice} монет!`);
-      } else {
-        alert("Недостаточно монет!");
-      }
+  const buyPokemon = (id: number, price: number, name: string) => {
+    const inflationRate = inflationRates[name] || 1.0;
+    const adjustedPrice = Math.round(price * inflationRate);  // Учитываем инфляцию
+    const finalPrice = Math.round(adjustedPrice * 1.1);  // Добавляем 10% комиссию
+
+    if (coins >= finalPrice) {
+      onPokemonPurchase(name, finalPrice);
+      alert(`Вы купили ${name} за ${finalPrice} монет (включая комиссию 10%)!`);
+    } else {
+      alert("Недостаточно монет!");
     }
   };
 
@@ -51,13 +45,12 @@ export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemon
           <Pokemon
             key={pokemon.id}
             pokemon={pokemon}
-            inflationRate={inflationRates[pokemon.name] || 1} // Применяем индивидуальный коэффициент инфляции
-            onBuy={() => buyPokemon(pokemon.id, pokemon.basePrice)}
-            canBuy={coins >= Math.round(pokemon.basePrice * (inflationRates[pokemon.name] || 1))}
+            inflationRate={inflationRates[pokemon.name]}
+            onBuy={() => buyPokemon(pokemon.id, pokemon.basePrice, pokemon.name)}
+            canBuy={coins >= Math.round(pokemon.basePrice * inflationRates[pokemon.name] * 1.1)}  // Цена с учетом комиссии
           />
         ))}
       </div>
     </div>
   );
 };
-
