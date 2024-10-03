@@ -1,4 +1,5 @@
 import React from 'react';
+import '../CSS/Pokemon.css';
 
 interface PokemonProps {
   pokemon: {
@@ -15,13 +16,12 @@ export const Pokemon: React.FC<PokemonProps> = ({ pokemon, inflationRate, onBuy,
   const price = Math.round(pokemon.basePrice * inflationRate);
 
   return (
-    <div className="pokemon" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+    <div className="pokemon">
       <span>{pokemon.name} - {price} coins</span>
       <button
-        className="button"
+        className={`button ${canBuy ? 'can-buy' : 'cannot-buy'}`}
         onClick={onBuy}
         disabled={!canBuy}
-        style={{ padding: '5px 10px', backgroundColor: canBuy ? '#28a745' : '#ccc', color: 'white', border: 'none', cursor: canBuy ? 'pointer' : 'not-allowed' }}
       >
         Buy
       </button>

@@ -1,131 +1,143 @@
-import React, { useState } from 'react';  
+import React, { Component } from 'react';
 import { Market } from './components/Market/Market';
 import { RandomMarket } from './components/Market/randomMarket';
-import * as PIXI from 'pixi.js';
-import storeImage from './components/Pictures/Store.jpg'; 
-import randomMarketImage from './components/Pictures/randomMarket.png'; 
-import pikachuImage from './components/Pictures/Pikachu.png'; 
-import backArrow from './components/Pictures/strelka.png'; 
+import storeImage from './components/Pictures/Store.jpg';
+import randomMarketImage from './components/Pictures/randomMarket.png';
+import pikachuImage from './components/Pictures/Pikachu.png';
+import backArrow from './components/Pictures/strelka.png';
+import { MarketVisibility } from './components/Enums/MarketVisibility';
+import './components/CSS/App.css';
 
+interface AppState {
+  currentMarket: MarketVisibility;
+  purchasedPokemons: { [key: string]: number };
+  coins: number;
+  inflationRates: { [key: string]: number };
+  showPokemonList: boolean;
+}
 
+class App extends Component<{}, AppState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      currentMarket: MarketVisibility.None,
+      purchasedPokemons: {},
+      coins: 100,
+      inflationRates: {
+        Pikachu: 1.0,
+        Charmander: 1.0,
+        Bulbasaur: 1.0,
+        Squirtle: 1.0,
+      },
+      showPokemonList: false,
+    };
+  }
 
-
-
-const App: React.FC = () => {
-  const [marketVisible, setMarketVisible] = useState(false);
-  const [pokemonVisible, setPokemonVisible] = useState(false);
-  const [randomMarketVisible, setRandomMarketVisible] = useState(false);
-  const [purchasedPokemons, setPurchasedPokemons] = useState<{ [key: string]: number }>({});
-  const [coins, setCoins] = useState(100);
-  const [inflationRates, setInflationRates] = useState<{ [key: string]: number }>({
-    Pikachu: 1.0,
-    Charmander: 1.0,
-    Bulbasaur: 1.0,
-    Squirtle: 1.0,
-  });
-
-  const openMarket = () => {
-    setMarketVisible(true);
+  openMarket = () => {
+    this.setState({ currentMarket: MarketVisibility.Market });
   };
 
-  const closeMarket = () => {
-    setMarketVisible(false);
-    setPokemonVisible(false);
+  closeMarket = () => {
+    this.setState({ currentMarket: MarketVisibility.None });
   };
 
-  const openRandomMarket = () => {
-    setRandomMarketVisible(true);
+  openRandomMarket = () => {
+    this.setState({ currentMarket: MarketVisibility.RandomMarket });
   };
 
-  const closeRandomMarket = () => {
-    setRandomMarketVisible(false);
+  closeRandomMarket = () => {
+    this.setState({ currentMarket: MarketVisibility.None });
   };
 
-  const togglePokemonList = () => {
-    setPokemonVisible(!pokemonVisible);
+  togglePokemonList = () => {
+    this.setState(prevState => ({ showPokemonList: !prevState.showPokemonList }));
   };
 
-  const handlePokemonPurchase = (pokemonName: string, price: number) => {
-    setPurchasedPokemons(prevState => ({
-      ...prevState,
-      [pokemonName]: (prevState[pokemonName] || 0) + 1
+  handlePokemonPurchase = (pokemonName: string, price: number) => {
+    this.setState(prevState => ({
+      purchasedPokemons: {
+        ...prevState.purchasedPokemons,
+        [pokemonName]: (prevState.purchasedPokemons[pokemonName] || 0) + 1,
+      },
+      coins: prevState.coins - price,
+      inflationRates: {
+        ...prevState.inflationRates,
+        [pokemonName]: prevState.inflationRates[pokemonName] + 0.1,
+      },
     }));
-    setCoins(coins - price);
-    setInflationRates(prevRates => ({
-      ...prevRates,
-      [pokemonName]: prevRates[pokemonName] + 0.1,
-    }));
   };
 
-  return (
-    <div>
-      {!marketVisible && !randomMarketVisible && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '320px' }}>
-          <img 
-            src={storeImage} 
-            alt="Store" 
-            style={{ cursor: 'pointer', width: '150px' }} 
-            onClick={openMarket}
-          />
-          <img 
-            src={randomMarketImage} 
-            alt="Random Market" 
-            style={{ cursor: 'pointer', width: '150px' }} 
-            onClick={openRandomMarket}
-          />
-        </div>
-      )}
+  render() {
+    const { currentMarket, coins, inflationRates, purchasedPokemons, showPokemonList } = this.state;
 
-      {marketVisible && (
-        <div>
-          <img 
-            src={backArrow} 
-            alt="Back to Store" 
-            onClick={closeMarket} 
-            style={{ cursor: 'pointer', width: '50px' }} 
-          />
-          <img 
-            src={pikachuImage} 
-            alt="Pikachu" 
-            onClick={togglePokemonList} 
-            style={{ cursor: 'pointer', width: '150px' }} 
-          />
-          {pokemonVisible && (
-            <Market 
-              coins={coins} 
-              inflationRates={inflationRates} 
-              onPokemonPurchase={handlePokemonPurchase} 
+    return (
+      <div>
+        {currentMarket === MarketVisibility.None && (
+          <div className="market-buttons">
+            <img
+              src={storeImage}
+              alt="Store"
+              className="store-image"
+              onClick={this.openMarket}
             />
-          )}
-          <div style={{ marginTop: '20px' }}>
-            <h3>Купленные покемоны:</h3>
-            <ul>
-              {Object.keys(purchasedPokemons).map(pokemon => (
-                <li key={pokemon}>
-                  {pokemon}: {purchasedPokemons[pokemon]}
-                </li>
-              ))}
-            </ul>
+            <img
+              src={randomMarketImage}
+              alt="Random Market"
+              className="random-market-image"
+              onClick={this.openRandomMarket}
+            />
           </div>
-        </div>
-      )}
-
-      {randomMarketVisible && (
-        <div>
-          <img 
-            src={backArrow} 
-            alt="Back to Store" 
-            onClick={closeRandomMarket} 
-            style={{ cursor: 'pointer', width: '50px' }} 
-          />
-          <RandomMarket 
-            coins={coins} 
-            onPokemonPurchase={handlePokemonPurchase} 
-          />
-        </div>
-      )}
-    </div>
-  );
-};
+        )}
+        {currentMarket === MarketVisibility.Market && (
+          <div className="market-container">
+            <img
+              src={backArrow}
+              alt="Back to Store"
+              onClick={this.closeMarket}
+              className="back-arrow"
+            />
+            <img
+              src={pikachuImage}
+              alt="Pikachu"
+              className="pikachu-image"
+              onClick={this.togglePokemonList} // По клику показываем или скрываем список
+            />
+            {showPokemonList && ( // Если showPokemonList === true, показываем Market
+              <Market
+                coins={coins}
+                inflationRates={inflationRates}
+                onPokemonPurchase={this.handlePokemonPurchase}
+              />
+            )}
+            <div className="purchased-pokemons">
+              <h3>Купленные покемоны:</h3>
+              <ul>
+                {Object.keys(purchasedPokemons).map(pokemon => (
+                  <li key={pokemon}>
+                    {pokemon}: {purchasedPokemons[pokemon]}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+        {currentMarket === MarketVisibility.RandomMarket && (
+          <div className="random-market-container">
+            <img
+              src={backArrow}
+              alt="Back to Store"
+              onClick={this.closeRandomMarket}
+              className="back-arrow"
+            />
+            <RandomMarket
+              coins={coins}
+              onPokemonPurchase={this.handlePokemonPurchase}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+}
 
 export default App;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pokemon } from '../Pokemon/Pokemon';
-
+import '../Market/Market.css';
 interface MarketProps {
   coins: number;
   inflationRates: { [key: string]: number };
@@ -25,8 +25,8 @@ export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemon
 
   const buyPokemon = (id: number, price: number, name: string) => {
     const inflationRate = inflationRates[name] || 1.0;
-    const adjustedPrice = Math.round(price * inflationRate);  // Учитываем инфляцию
-    const finalPrice = Math.round(adjustedPrice * 1.1);  // Добавляем 10% комиссию
+    const adjustedPrice = Math.round(price * inflationRate);  
+    const finalPrice = Math.round(adjustedPrice * 1.1);  
 
     if (coins >= finalPrice) {
       onPokemonPurchase(name, finalPrice);
@@ -37,17 +37,17 @@ export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemon
   };
 
   return (
-    <div id="market">
+    <div className="market">
       <p>Монеты: {coins}</p>
       <h2>Доступные покемоны</h2>
-      <div id="pokemon-list">
+      <div className="pokemon-list">
         {pokemons.map(pokemon => (
           <Pokemon
             key={pokemon.id}
             pokemon={pokemon}
             inflationRate={inflationRates[pokemon.name]}
             onBuy={() => buyPokemon(pokemon.id, pokemon.basePrice, pokemon.name)}
-            canBuy={coins >= Math.round(pokemon.basePrice * inflationRates[pokemon.name] * 1.1)}  // Цена с учетом комиссии
+            canBuy={coins >= Math.round(pokemon.basePrice * inflationRates[pokemon.name] * 1.1)}
           />
         ))}
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../CSS/randomMarket.css';
 
 interface RandomMarketProps {
   coins: number;
@@ -33,12 +34,9 @@ export const RandomMarket: React.FC<RandomMarketProps> = ({ coins, onPokemonPurc
   };
 
   return (
-    <div>
+    <div className="random-market">
       <h2>Случайный Магазин</h2>
-      <button 
-        onClick={buyRandomPokemon} 
-        style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}
-      >
+      <button className="buy-button" onClick={buyRandomPokemon}>
         Купить случайного покемона
       </button>
     </div>
