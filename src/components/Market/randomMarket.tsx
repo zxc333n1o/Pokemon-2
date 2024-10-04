@@ -23,11 +23,11 @@ export const RandomMarket: React.FC<RandomMarketProps> = ({ coins, onPokemonPurc
   const buyRandomPokemon = () => {
     const randomIndex = Math.floor(Math.random() * initialPokemons.length);
     const randomPokemon = initialPokemons[randomIndex];
-    const price = randomPokemon.basePrice;
+    const fixedPrice = 5; // Фиксированная цена 5 монет
 
-    if (coins >= price) {
-      onPokemonPurchase(randomPokemon.name, price);
-      alert(`Вы купили случайного покемона: ${randomPokemon.name} за ${price} монет!`);
+    if (coins >= fixedPrice) {
+      onPokemonPurchase(randomPokemon.name, fixedPrice);
+      alert(`Вы купили случайного покемона: ${randomPokemon.name} за ${fixedPrice} монет!`);
     } else {
       alert('Недостаточно монет!');
     }
@@ -37,7 +37,7 @@ export const RandomMarket: React.FC<RandomMarketProps> = ({ coins, onPokemonPurc
     <div className="random-market">
       <h2>Случайный Магазин</h2>
       <button className="buy-button" onClick={buyRandomPokemon}>
-        Купить случайного покемона
+        Купить случайного покемона за 5 монет
       </button>
     </div>
   );

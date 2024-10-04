@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Market } from './components/Market/Market';
 import { RandomMarket } from './components/Market/randomMarket';
-import storeImage from './components/Pictures/Store.jpg';
-import randomMarketImage from './components/Pictures/randomMarket.png';
-import pikachuImage from './components/Pictures/Pikachu.png';
-import backArrow from './components/Pictures/strelka.png';
+import storeImage from './components/assets/Store.jpg';
+import randomMarketImage from './components/assets/randomMarket.png';
+import pikachuImage from './components/assets/Pikachu.png';
+import backArrow from './components/assets/strelka.png';
 import { MarketVisibility } from './components/Enums/MarketVisibility';
 import './components/CSS/App.css';
 

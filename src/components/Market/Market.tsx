@@ -1,10 +1,11 @@
 import React from 'react';
 import { Pokemon } from '../Pokemon/Pokemon';
 import '../Market/Market.css';
+
 interface MarketProps {
   coins: number;
   inflationRates: { [key: string]: number };
-  onPokemonPurchase: (pokemonName: string, price: number) => void; 
+  onPokemonPurchase: (pokemonName: string, price: number) => void;
 }
 
 interface PokemonType {
@@ -25,8 +26,8 @@ export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemon
 
   const buyPokemon = (id: number, price: number, name: string) => {
     const inflationRate = inflationRates[name] || 1.0;
-    const adjustedPrice = Math.round(price * inflationRate);  
-    const finalPrice = Math.round(adjustedPrice * 1.1);  
+    const adjustedPrice = Math.round(price * inflationRate);
+    const finalPrice = Math.round(adjustedPrice * 1.1);  // Комиссия 10%
 
     if (coins >= finalPrice) {
       onPokemonPurchase(name, finalPrice);
@@ -47,7 +48,7 @@ export const Market: React.FC<MarketProps> = ({ coins, inflationRates, onPokemon
             pokemon={pokemon}
             inflationRate={inflationRates[pokemon.name]}
             onBuy={() => buyPokemon(pokemon.id, pokemon.basePrice, pokemon.name)}
-            canBuy={coins >= Math.round(pokemon.basePrice * inflationRates[pokemon.name] * 1.1)}
+            canBuy={coins >= Math.round(pokemon.basePrice * inflationRates[pokemon.name] * 1.1)} // Цена с учетом комиссии
           />
         ))}
       </div>
