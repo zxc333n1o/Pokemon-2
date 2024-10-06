@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pokemon } from '../Pokemon/Pokemon';
-import '../Market/Market.css';
+import '../CSS/Market.css';
 
 interface MarketProps {
   coins: number;
